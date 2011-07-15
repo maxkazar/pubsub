@@ -17,11 +17,12 @@ Jeweler::Tasks.new do |gem|
   gem.name = "pubsub"
   gem.homepage = "http://github.com/maxkazar/pubsub"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{PubSub pattern}
+  gem.description = %Q{PubSub pattern}
   gem.email = "maxkazargm@gmail.com"
   gem.authors = ["Max Kazarin"]
   # dependencies defined in Gemfile
+  gem.add_dependency "ruby_events", ">=0"
 end
 Jeweler::RubygemsDotOrgTasks.new
 
