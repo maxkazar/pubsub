@@ -1,16 +1,139 @@
 = pubsub
 
-Description goes here.
+== DESCRIPTION:
 
-== Contributing to pubsub
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
-* Fork the project
-* Start a feature/bugfix branch
-* Commit and push until you are happy with your contribution
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+Ruby PubSub pattern for objects. Allows to coordinate object (publisher/subscriber) communication.
+
+== FEATURES:
+
+* Support multithread pulisher/subscriber
+* Contains message queue and dispatcher.
+* Dispatcher work in main thread and sleep when message queue is empty
+
+== USAGE:
+    Using pubsub is simple
+
+    require 'rubygems'
+    require 'ruby_events'
+
+    Include pubsub module into class
+
+    class MyPublischer
+        include PubSub
+
+    end
+
+    Run message queue dispatcher
+
+    PubSub.run
+
+    Message in channel with subchannels (include '/') sending throw all subchannels, e.g. for channel 'system/info' message sending to subsribers of channel 'system/info', subchannel 'system' and global channel '*'
+
+    Unsubscribe from all channels use unsubscribe method without params.
+
+    class MyPublischer
+        include PubSub
+        def initialize
+            subscribe "system/info", :log_info
+            subscribe "system/signout", :destroy
+        end
+
+        def destroy
+            unsubscribe
+        end
+    end
+
+    Unsubscribe all listeners from one channel use unsubscribe method with channel name
+
+    class TextLogger
+        include PubSub
+        def initialize
+            subscribe "system/info", :log_info
+        end
+
+        def log_info
+            #log to text file
+        end
+    end
+
+    class ConsoleLogger
+        include PubSub
+        def initialize
+            subscribe "system/info", :log_info
+        end
+
+        def log_info
+            #log to console
+        end
+    end
+
+    class LoggerManager
+        include PubSub
+
+        def unsubscribe_all_logger
+            unsubscribe "system/info"
+        end
+    end
+
+    Unsubscribe one listener from one channel use unsubscribe method with channel name and listener
+
+    class MyPublisher
+        include PubSub
+
+        def initialize
+            subscribe "system/info", :log_info
+        end
+
+        def destroy
+            unsubscribe "system/info", :log_info
+        end
+    end
+
+== EXAMPLES:
+
+Create object and subscribe it to channel "system/info"
+
+    class SystemLogger
+        include PubSub
+
+        def initialize
+            subscribe "system/info", :log_info
+        end
+
+        def destroy
+            unsubscribe
+        end
+
+        def log_info(message)
+            puts message
+
+            # stop pubsub dispatcher
+            PubSub.stop
+        end
+    end
+
+    class Publisher
+        include PubSub
+
+        def say_hello
+            publish "system/info", "Hello world!"
+        end
+    end
+
+    SystemLogger.new
+    publisher = Publisher.new
+    publisher.say_hello
+
+    # run pubsub dispatcher
+    PubSub.run
+
+== INSTALL:
+
+* gem install pubsub
+
+== DOCS:
+
+http://rubydoc.info/gems/pubsub
 
 == Copyright
 

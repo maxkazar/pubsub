@@ -48,4 +48,4 @@ pkg
 #*.rbc
 
 # For RubyMine
-.idea
+.idea/
