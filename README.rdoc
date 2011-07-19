@@ -11,25 +11,25 @@ Ruby PubSub pattern for objects. Allows to coordinate object (publisher/subscrib
 * Dispatcher work in main thread and sleep when message queue is empty
 
 == USAGE:
-    Using pubsub is simple
+Using pubsub is simple
 
     require 'rubygems'
     require 'ruby_events'
 
-    Include pubsub module into class
+Include pubsub module into class
 
     class MyPublischer
         include PubSub
 
     end
 
-    Run message queue dispatcher
+Run message queue dispatcher
 
     PubSub.run
 
-    Message in channel with subchannels (include '/') sending throw all subchannels, e.g. for channel 'system/info' message sending to subsribers of channel 'system/info', subchannel 'system' and global channel '*'
+Message in channel with subchannels (include '/') sending throw all subchannels, e.g. for channel 'system/info' message sending to subsribers of channel 'system/info', subchannel 'system' and global channel '*'
 
-    Unsubscribe from all channels use unsubscribe method without params.
+Unsubscribe from all channels use unsubscribe method without params.
 
     class MyPublischer
         include PubSub
@@ -43,7 +43,7 @@ Ruby PubSub pattern for objects. Allows to coordinate object (publisher/subscrib
         end
     end
 
-    Unsubscribe all listeners from one channel use unsubscribe method with channel name
+Unsubscribe all listeners from one channel use unsubscribe method with channel name
 
     class TextLogger
         include PubSub
@@ -75,7 +75,7 @@ Ruby PubSub pattern for objects. Allows to coordinate object (publisher/subscrib
         end
     end
 
-    Unsubscribe one listener from one channel use unsubscribe method with channel name and listener
+Unsubscribe one listener from one channel use unsubscribe method with channel name and listener
 
     class MyPublisher
         include PubSub
