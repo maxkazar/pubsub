@@ -64,6 +64,7 @@ module PubSub
 
   def PubSub.stop
     @@stopped = true
+    PubSub.thread.wakeup if PubSub.thread.status == "sleep"
   end
 
   protected
