@@ -33,6 +33,12 @@ module PubSub
       logger.info "Add to publish queue #{self.class.name} to #{channel} with #{args.to_s}"
       PubSub.queue.push({:sender => self, :channel => channel, :params => args})
       PubSub.thread.wakeup if PubSub.thread.status == "sleep"
+      if PubSub.queue.count > PubSub.queue_size
+        #puts "Mutex sleep, queue length #{PubSub.queue.count}"
+        PubSub.waiting.push Thread.current
+        mutex.sleep
+      end
+
     end
   end
 
@@ -45,7 +51,10 @@ module PubSub
         break
       end
 
-      sleep if PubSub.queue.empty?
+      if PubSub.queue.empty?
+        PubSub.waiting.push.each {|thread| thread.wakeup }
+        sleep
+      end
 
       unless PubSub.queue.empty?
         publish_info = PubSub.queue.shift
@@ -94,6 +103,18 @@ module PubSub
       logger.info "Unsubscribe #{self.class.name} from #{channel} listener #{proc}"
       PubSub.events.remove channel, proc
       channel_handlers[channel].delete_if {|stored_event| stored_event == proc} if channel_handlers.include? channel
+  end
+
+  def PubSub.queue_size
+    @@queue_size ||= 100
+  end
+
+  def PubSub.queue_size=(value)
+    @@queue_size = value
+  end
+
+  def PubSub.waiting
+    @@waiting ||= []
   end
 
   def PubSub.thread
