@@ -49,3 +49,7 @@ pkg
 
 # For RubyMine
 .idea/
+
+Gemfile.lock
+*.gem
+*.gemspec
