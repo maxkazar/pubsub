@@ -52,4 +52,3 @@ pkg
 
 Gemfile.lock
 *.gem
-*.gemspec
